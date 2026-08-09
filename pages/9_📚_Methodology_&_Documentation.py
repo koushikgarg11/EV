@@ -20,44 +20,68 @@ tab_math, tab_docs = st.tabs(["🧮 Mathematical Formulations & GIS Algorithms",
 
 with tab_math:
     st.subheader("🧮 Decision Intelligence Mathematical Core")
-    
-    col_m1, col_m2 = st.columns(2)
-    
-    with col_m1:
-        st.markdown(r"""
-        <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-            <h4>1. Haversine Spatial Distance Formula</h4>
-            <p>Calculates exact great-circle distance between POI coordinates \((lat_1, lon_1)\) and charger coordinates \((lat_2, lon_2)\):</p>
-            $$\text{d} = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta \phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)}\right)$$
-            <p style="font-size: 0.85rem; color: #8B949E;">Where \(r = 6371\text{ km}\), \(\phi\) is latitude in radians, and \(\lambda\) is longitude in radians.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(r"""
-        <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px;">
-            <h4>2. AHP Criterion Weighting (Analytic Hierarchy Process)</h4>
-            <p>Pairwise comparison matrix \(A\) yields principal eigenvector \(w\) representing criterion weight importance:</p>
-            $$A w = \lambda_{\max} w, \quad \text{Consistency Ratio (CR)} = \frac{CI}{RI} < 0.10$$
-        </div>
-        """, unsafe_allow_html=True)
 
-    with col_m2:
-        st.markdown(r"""
-        <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-            <h4>3. TOPSIS Closeness Coefficient</h4>
-            <p>Relative closeness to ideal solution \(S^+\) and negative ideal solution \(S^-\):</p>
-            $$C_i^* = \frac{d_i^-}{d_i^+ + d_i^-}, \quad C_i^* \in [0, 1]$$
-            <p style="font-size: 0.85rem; color: #8B949E;">Candidate site with \(C_i^*\) closest to 1.0 receives highest investment rank.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(r"""
-        <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px;">
-            <h4>4. Charging Desert Severity Index Formula</h4>
-            <p>Quantifies unserved commercial demand severity:</p>
-            $$\text{Severity}_i = 0.60 \times \left(\frac{\text{Footfall}_i}{\text{Footfall}_{max}}\right) + 0.40 \times \left(\frac{\text{DistToCharger}_i}{50\text{ km}}\right)$$
-        </div>
-        """, unsafe_allow_html=True)
+    # Render a self-contained HTML document with MathJax to reliably display formulas
+    cards_html = """
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;">
+      <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px;">
+        <h4>1. Haversine Spatial Distance Formula</h4>
+        <p>Calculates exact great-circle distance between POI coordinates \((lat_1, lon_1)\) and charger coordinates \((lat_2, lon_2)\):</p>
+        <div class="formula">$$\n\text{d} = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta \phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)}\right)\n$$</div>
+        <p style="font-size: 0.85rem; color: #8B949E;">Where \(r = 6371\text{ km}\), \(\phi\) is latitude in radians, and \(\lambda\) is longitude in radians.</p>
+      </div>
+
+      <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px;">
+        <h4>3. TOPSIS Closeness Coefficient</h4>
+        <p>Relative closeness to ideal solution \(S^+\) and negative ideal solution \(S^-\):</p>
+        <div class="formula">$$\nC_i^* = \frac{d_i^-}{d_i^+ + d_i^-}, \quad C_i^* \in [0, 1]\n$$</div>
+        <p style="font-size: 0.85rem; color: #8B949E;">Candidate site with \(C_i^*\) closest to 1.0 receives highest investment rank.</p>
+      </div>
+
+      <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px;">
+        <h4>2. AHP Criterion Weighting (Analytic Hierarchy Process)</h4>
+        <p>Pairwise comparison matrix \(A\) yields principal eigenvector \(w\) representing criterion weight importance:</p>
+        <div class="formula">$$\nA w = \lambda_{\max} w, \quad \text{Consistency Ratio (CR)} = \frac{CI}{RI} < 0.10\n$$</div>
+      </div>
+
+      <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(48, 54, 61, 0.8); border-radius: 12px; padding: 20px;">
+        <h4>4. Charging Desert Severity Index Formula</h4>
+        <p>Quantifies unserved commercial demand severity:</p>
+        <div class="formula">$$\n\text{Severity}_i = 0.60 \times \left(\frac{\text{Footfall}_i}{\text{Footfall}_{max}}\right) + 0.40 \times \left(\frac{\text{DistToCharger}_i}{50\text{ km}}\right)\n$$</div>
+      </div>
+    </div>
+    """
+
+    html_doc = f"""<!doctype html>
+    <html lang=\"en\"> 
+    <head>
+      <meta charset=\"utf-8\">
+      <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+      <style>
+        body {{ background: transparent; color: #E6EEF3; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial; margin:0; padding:12px }}
+        h4 {{ margin:0 0 8px 0; color:#E6EEF3 }}
+        p {{ color:#b9c1c8 }}
+        .formula {{ background: #0b1220; padding:14px; border-radius:8px; margin-top:8px; color:#e6f7ff }}
+      </style>
+      <!-- MathJax 3 CDN -->
+      <script>
+      window.MathJax = {{} };
+      </script>
+      <script src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>
+    </head>
+    <body>
+      {cards_html}
+    </body>
+    </html>
+    """
+
+    import base64
+    try:
+        b64 = base64.b64encode(html_doc.encode('utf-8')).decode('ascii')
+        data_uri = f"data:text/html;charset=utf-8;base64,{b64}"
+        st.iframe(data_uri, height=680)
+    except Exception:
+        st.markdown(cards_html, unsafe_allow_html=True)
 
 with tab_docs:
     st.sidebar.header("🎯 Documentation Navigation")
