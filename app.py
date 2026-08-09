@@ -131,6 +131,43 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Key Insights panel (robust import with fallbacks)
+col_welcome1, col_welcome2 = st.columns([1.8, 1.2])
+with col_welcome2:
+    try:
+        from src.components import render_key_insights
+    except Exception:
+        try:
+            from components import render_key_insights
+        except Exception:
+            src_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src")
+            if src_path not in sys.path:
+                sys.path.insert(0, src_path)
+            try:
+                from components import render_key_insights
+            except Exception:
+                # fallback: define a minimal local renderer so app still renders
+                def render_key_insights(title="💡 Key Insights", insights=None, badge_text="⚡ EXECUTIVE METRICS"):
+                    if insights is None:
+                        insights = ["No key insights available."]
+                    items = "".join([f"<div><b>{i}</b></div>" for i in insights])
+                    st.markdown(f"<div style='padding:12px;border:1px solid rgba(255,255,255,0.05);border-radius:8px;background:#0f1724'>{items}</div>", unsafe_allow_html=True)
+
+    # Render with example/default insights if component is present
+    try:
+        render_key_insights(
+            title="💡 Platform Key Insights",
+            insights=[
+                "<b>Infrastructure Deficit:</b> Registered EVs are outpacing charger installations.",
+                "<b>Corridor Vulnerability:</b> Some highway segments exceed large gaps between fast chargers.",
+                "<b>Commercial Demand:</b> Retail & transit hubs show high ROI potential.",
+                "<b>Grid Preparedness:</b> Many recommended sites are near substations."
+            ],
+            badge_text="⚡ EXECUTIVE METRICS"
+        )
+    except Exception as e:
+        st.warning(f"Key insights renderer failed: {e}")
+
 # Sidebar Navigation Note
 st.sidebar.image("https://img.icons8.com/color/96/000000/electric-vehicle.png", width=80)
 st.sidebar.title("Navigation Menu")
