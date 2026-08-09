@@ -52,25 +52,28 @@ with tab_math:
     </div>
     """
 
-    html_doc = f"""<!doctype html>
+    # Build html_doc without f-string to avoid accidental brace interpretation
+    html_doc = """<!doctype html>
     <html lang=\"en\"> 
     <head>
       <meta charset=\"utf-8\">
       <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
       <style>
-        body {{ background: transparent; color: #E6EEF3; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial; margin:0; padding:12px }}
-        h4 {{ margin:0 0 8px 0; color:#E6EEF3 }}
-        p {{ color:#b9c1c8 }}
-        .formula {{ background: #0b1220; padding:14px; border-radius:8px; margin-top:8px; color:#e6f7ff }}
+        body { background: transparent; color: #E6EEF3; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial; margin:0; padding:12px }
+        h4 { margin:0 0 8px 0; color:#E6EEF3 }
+        p { color:#b9c1c8 }
+        .formula { background: #0b1220; padding:14px; border-radius:8px; margin-top:8px; color:#e6f7ff }
       </style>
       <!-- MathJax 3 CDN -->
       <script>
-      window.MathJax = {{} };
+      window.MathJax = {};
       </script>
       <script src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>
     </head>
     <body>
-      {cards_html}
+    """
+
+    html_doc = html_doc + cards_html + """
     </body>
     </html>
     """
@@ -78,7 +81,7 @@ with tab_math:
     import base64
     try:
         b64 = base64.b64encode(html_doc.encode('utf-8')).decode('ascii')
-        data_uri = f"data:text/html;charset=utf-8;base64,{b64}"
+        data_uri = "data:text/html;charset=utf-8;base64," + b64
         st.iframe(data_uri, height=680)
     except Exception:
         st.markdown(cards_html, unsafe_allow_html=True)
