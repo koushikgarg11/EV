@@ -154,6 +154,7 @@ with col1:
         color="ev_registrations",
         color_continuous_scale="Viridis",
         template="plotly_dark",
+        title=" Vehicle Category Market Share",
         height=420
     )
     fig_tree = fix_plotly_dark(fig_tree)
@@ -170,6 +171,7 @@ with col2:
         markers=True,
         line_shape="spline",
         template="plotly_dark",
+        title="Multi-Year Adoption Trajectory",
         height=420
     )
     fig_trend = fix_plotly_dark(fig_trend)
