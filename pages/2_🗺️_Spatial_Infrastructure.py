@@ -238,6 +238,7 @@ fig_3d = px.scatter_3d(
     color_continuous_scale="Turbid",
     labels={"lon": "Longitude", "lat": "Latitude", "kw_power": "Power Capacity (kW)"},
     template="plotly_dark",
+    title="3D Spatial Bubble Visualization",
     height=550
 )
 fig_3d = fix_plotly_dark(fig_3d)
