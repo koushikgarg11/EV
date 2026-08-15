@@ -197,6 +197,7 @@ fig_quad = px.scatter(
     hover_data=["state", "total_ev_registrations", "avg_yoy_growth_pct", "avg_penetration_pct"],
     labels={"total_ev_registrations": "Total EV Registrations", "avg_yoy_growth_pct": "YoY Growth Rate (%)"},
     template="plotly_dark",
+    title=" YoY Growth vs Volume Quadrant Analysis",
     height=480
 )
 if not district_quad.empty:
