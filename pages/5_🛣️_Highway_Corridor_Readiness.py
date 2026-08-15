@@ -169,6 +169,7 @@ with col1:
         color_discrete_map={"Critical Gap Zone": "#FF5252", "Moderate Risk": "#FFC107", "Readiness High": "#00E676"},
         hole=0.4,
         template="plotly_dark",
+        title="Highway Readiness Breakdown",
         height=400
     )
     fig_status = fix_plotly_dark(fig_status)
@@ -187,6 +188,7 @@ with col2:
         hover_data=["highway_name", "readiness_status", "freight_percentage"],
         labels={"daily_traffic_volume": "Daily Traffic Volume (Vehicles/Day)", "nearest_charger_dist_km": "Distance to Charger (km)"},
         template="plotly_dark",
+        title="Traffic Volume vs Charger Distance",
         height=400
     )
     fig_scatter = fix_plotly_dark(fig_scatter)
@@ -205,6 +207,7 @@ fig_bar = px.bar(
     text="nearest_charger_dist_km",
     labels={"corridor_gap_score": "Corridor Gap Risk Score", "highway_id": "Highway Segment ID"},
     template="plotly_dark",
+    title="Highway Gap Score Profile Across Segments",
     height=420
 )
 fig_bar = fix_plotly_dark(fig_bar)
