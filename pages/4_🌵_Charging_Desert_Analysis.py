@@ -177,6 +177,7 @@ with col1:
         color_discrete_sequence=["#FF5252"],
         labels={"desert_severity_index": "Desert Severity Score"},
         template="plotly_dark",
+        title="Desert Severity Distribution",
         height=400
     )
     fig_hist = fix_plotly_dark(fig_hist)
@@ -195,6 +196,7 @@ with col2:
         hover_data=["category", "state", "district"],
         labels={"dist_nearest_charger_km": "Distance to Charger (km)", "footfall_index": "Commercial Footfall Index"},
         template="plotly_dark",
+        title="Footfall Index vs Charger Distance Scatter",
         height=400
     )
     fig_scatter = fix_plotly_dark(fig_scatter)
