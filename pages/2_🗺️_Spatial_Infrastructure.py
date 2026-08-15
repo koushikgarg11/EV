@@ -1,8 +1,13 @@
 import os
 import sys
 
-# Ensure root directory is in sys.path for robust imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Ensure root directory and src directory are in sys.path for robust imports
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+SRC_DIR = os.path.join(BASE_DIR, "src")
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
 
 import streamlit as st
 import pandas as pd
@@ -10,10 +15,103 @@ import plotly.express as px
 import folium
 from folium.plugins import MarkerCluster, HeatMap
 from streamlit_folium import st_folium
-from src.database.db_manager import db
-from src.components import render_key_insights
+
+try:
+    from src.database.db_manager import db
+except Exception:
+    from database.db_manager import db
+
+try:
+    from src.components import render_key_insights, apply_custom_theme, fix_plotly_dark
+except Exception:
+    try:
+        from components import render_key_insights, apply_custom_theme, fix_plotly_dark
+    except Exception:
+        def apply_custom_theme():
+            pass
+        def fix_plotly_dark(fig):
+            if fig is not None:
+                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#FFFFFF"))
+            return fig
+        def render_key_insights(title="💡 Key Insights", insights=None, badge_text="⚡ EXECUTIVE METRICS", **kwargs):
+            if insights is None:
+                insights = ["No key insights available."]
+            items = "".join([f"<div style='color:#FFFFFF !important;'><b>{i}</b></div>" for i in insights])
+            st.markdown(f"<div style='padding:16px;border:1px solid rgba(56,189,248,0.3);border-radius:12px;background:#0f1724;color:#FFFFFF !important;'>{items}</div>", unsafe_allow_html=True)
+
 
 st.set_page_config(page_title="Spatial Infrastructure", page_icon="🗺️", layout="wide")
+
+# Apply theme with inline fallback
+st.markdown("""
+<style>
+    .stApp, [data-testid="stAppViewContainer"], .main {
+        background-color: #0E1117 !important;
+        color: #FFFFFF !important;
+    }
+    p, span, label, li, h1, h2, h3, h4, h5, h6, td, th {
+        color: #FFFFFF !important;
+    }
+    header[data-testid="stHeader"], [data-testid="stHeader"], .stAppHeader, .stHeader, div[data-testid="stToolbar"] {
+        background-color: #0E1117 !important;
+        background: #0E1117 !important;
+        color: #FFFFFF !important;
+    }
+    div[data-testid="stDecoration"] {
+        background-image: none !important;
+        background-color: #0E1117 !important;
+    }
+    section[data-testid="stSidebar"] {
+        background-color: #000000 !important;
+        background: #000000 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #FFFFFF !important;
+    }
+    div[data-baseweb="select"] > div, div[data-baseweb="select"] input, .stSelectbox div[role="button"], .stMultiSelect div[role="button"], div[data-baseweb="base-input"] {
+        background-color: #161B22 !important;
+        border-color: rgba(56, 189, 248, 0.4) !important;
+        color: #FFFFFF !important;
+    }
+    span[data-baseweb="tag"], div[data-baseweb="tag"] {
+        background: linear-gradient(90deg, rgba(0, 230, 118, 0.25), rgba(56, 189, 248, 0.2)) !important;
+        border: 1px solid #00E676 !important;
+        color: #FFFFFF !important;
+        border-radius: 6px !important;
+    }
+    span[data-baseweb="tag"] *, div[data-baseweb="tag"] * {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+    }
+    ul[data-baseweb="menu"], div[data-baseweb="popover"], div[data-baseweb="popover"] * {
+        background-color: #161B22 !important;
+        color: #FFFFFF !important;
+    }
+    li[data-baseweb="option"] {
+        background-color: #161B22 !important;
+        color: #FFFFFF !important;
+    }
+    li[data-baseweb="option"]:hover {
+        background-color: rgba(56, 189, 248, 0.25) !important;
+        color: #FFFFFF !important;
+    }
+    .stPlotlyChart, div[data-testid="stPlotlyChart"] {
+        background-color: #0E1117 !important;
+        background: #0E1117 !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        padding: 6px !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+try:
+    apply_custom_theme()
+except Exception:
+    pass
 
 st.title("🗺️ Spatial Infrastructure & Interactive Heatmap Engine")
 st.markdown("### *Interactive Plotly Density maps, 3D spatial coordinate bubbles, and Folium multi-layered catchment maps.*")
@@ -74,8 +172,10 @@ with col_map1:
         template="plotly_dark",
         height=520
     )
+    fig_density = fix_plotly_dark(fig_density)
     fig_density.update_layout(margin={"r":0,"t":40,"l":0,"b":0})
-    st.plotly_chart(fig_density, width="stretch")
+    st.plotly_chart(fig_density, use_container_width=True)
+
 
 with col_map2:
     st.subheader("📍 Multi-Layered Folium Catchment & Cluster Map")
@@ -100,8 +200,8 @@ with col_map2:
         folium.Marker(
             location=[row["lat"], row["lon"]],
             popup=folium.Popup(f"""
-                <div style="font-family: sans-serif; width: 180px;">
-                    <b>{row['name']}</b><br>
+                <div style="font-family: sans-serif; width: 180px; color: #1E293B;">
+                    <b style="color: #0F172A;">{row['name']}</b><br>
                     ⚡ Power: <b>{row['kw_power']} kW</b><br>
                     🔌 Type: {row['charger_type']}<br>
                     🏢 Operator: {row['operator']}
@@ -120,7 +220,7 @@ with col_map2:
                 fill_opacity=0.1
             ).add_to(m)
             
-    st_folium(m, width=650, height=520)
+    st_folium(m, use_container_width=True, height=520)
 
 st.markdown("---")
 
@@ -140,8 +240,10 @@ fig_3d = px.scatter_3d(
     template="plotly_dark",
     height=550
 )
+fig_3d = fix_plotly_dark(fig_3d)
 fig_3d.update_layout(scene=dict(aspectmode="cube"))
-st.plotly_chart(fig_3d, width="stretch")
+st.plotly_chart(fig_3d, use_container_width=True)
+
 
 st.markdown("---")
 
@@ -155,4 +257,3 @@ render_key_insights(
     ],
     badge_text="⚡ SPATIAL INTELLIGENCE"
 )
-

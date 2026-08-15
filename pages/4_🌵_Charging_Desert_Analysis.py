@@ -1,20 +1,123 @@
 import os
 import sys
 
-# Ensure root directory is in sys.path for robust imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Ensure root directory and src directory are in sys.path for robust imports
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+SRC_DIR = os.path.join(BASE_DIR, "src")
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import folium
 from streamlit_folium import st_folium
-from src.database.db_manager import db
-from src.gis_engine.catchment import CatchmentAnalyzer
-from src.gis_engine.hotspot import ChargingDesertHotspotAnalyzer
-from src.components import render_key_insights
+
+try:
+    from src.database.db_manager import db
+except Exception:
+    from database.db_manager import db
+
+try:
+    from src.gis_engine.catchment import CatchmentAnalyzer
+    from src.gis_engine.hotspot import ChargingDesertHotspotAnalyzer
+except Exception:
+    from gis_engine.catchment import CatchmentAnalyzer
+    from gis_engine.hotspot import ChargingDesertHotspotAnalyzer
+
+try:
+    from src.components import render_key_insights, apply_custom_theme, fix_plotly_dark
+except Exception:
+    try:
+        from components import render_key_insights, apply_custom_theme, fix_plotly_dark
+    except Exception:
+        def apply_custom_theme():
+            pass
+        def fix_plotly_dark(fig):
+            if fig is not None:
+                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#FFFFFF"))
+            return fig
+        def render_key_insights(title="💡 Key Insights", insights=None, badge_text="⚡ EXECUTIVE METRICS", **kwargs):
+            if insights is None:
+                insights = ["No key insights available."]
+            items = "".join([f"<div style='color:#FFFFFF !important;'><b>{i}</b></div>" for i in insights])
+            st.markdown(f"<div style='padding:16px;border:1px solid rgba(56,189,248,0.3);border-radius:12px;background:#0f1724;color:#FFFFFF !important;'>{items}</div>", unsafe_allow_html=True)
+
 
 st.set_page_config(page_title="Charging Desert Analysis", page_icon="🌵", layout="wide")
+
+# Apply theme with inline fallback
+st.markdown("""
+<style>
+    .stApp, [data-testid="stAppViewContainer"], .main {
+        background-color: #0E1117 !important;
+        color: #FFFFFF !important;
+    }
+    p, span, label, li, h1, h2, h3, h4, h5, h6, td, th {
+        color: #FFFFFF !important;
+    }
+    header[data-testid="stHeader"], [data-testid="stHeader"], .stAppHeader, .stHeader, div[data-testid="stToolbar"] {
+        background-color: #0E1117 !important;
+        background: #0E1117 !important;
+        color: #FFFFFF !important;
+    }
+    div[data-testid="stDecoration"] {
+        background-image: none !important;
+        background-color: #0E1117 !important;
+    }
+    section[data-testid="stSidebar"] {
+        background-color: #000000 !important;
+        background: #000000 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #FFFFFF !important;
+    }
+    div[data-baseweb="select"] > div, div[data-baseweb="select"] input, .stSelectbox div[role="button"], .stMultiSelect div[role="button"], div[data-baseweb="base-input"] {
+        background-color: #161B22 !important;
+        border-color: rgba(56, 189, 248, 0.4) !important;
+        color: #FFFFFF !important;
+    }
+    span[data-baseweb="tag"], div[data-baseweb="tag"] {
+        background: linear-gradient(90deg, rgba(0, 230, 118, 0.25), rgba(56, 189, 248, 0.2)) !important;
+        border: 1px solid #00E676 !important;
+        color: #FFFFFF !important;
+        border-radius: 6px !important;
+    }
+    span[data-baseweb="tag"] *, div[data-baseweb="tag"] * {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+    }
+    ul[data-baseweb="menu"], div[data-baseweb="popover"], div[data-baseweb="popover"] * {
+        background-color: #161B22 !important;
+        color: #FFFFFF !important;
+    }
+    li[data-baseweb="option"] {
+        background-color: #161B22 !important;
+        color: #FFFFFF !important;
+    }
+    li[data-baseweb="option"]:hover {
+        background-color: rgba(56, 189, 248, 0.25) !important;
+        color: #FFFFFF !important;
+    }
+    .stPlotlyChart, div[data-testid="stPlotlyChart"] {
+        background-color: #0E1117 !important;
+        background: #0E1117 !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+        padding: 6px !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+try:
+    apply_custom_theme()
+except Exception:
+    pass
 
 st.title("🌵 Charging Desert Hotspot Detection")
 st.markdown("### *Automated spatial identification of high commercial demand zones lacking public EV chargers.*")
@@ -76,7 +179,8 @@ with col1:
         template="plotly_dark",
         height=400
     )
-    st.plotly_chart(fig_hist, width="stretch")
+    fig_hist = fix_plotly_dark(fig_hist)
+    st.plotly_chart(fig_hist, use_container_width=True)
 
 with col2:
     st.subheader("🎯 Footfall Index vs Charger Distance Scatter")
@@ -93,7 +197,9 @@ with col2:
         template="plotly_dark",
         height=400
     )
-    st.plotly_chart(fig_scatter, width="stretch")
+    fig_scatter = fix_plotly_dark(fig_scatter)
+    st.plotly_chart(fig_scatter, use_container_width=True)
+
 
 st.markdown("---")
 
@@ -122,7 +228,7 @@ with col_map:
             popup=f"<b>{row['name']}</b><br>State: {row['state']}<br>Category: {row['category']}<br>Dist to Charger: <b>{row['dist_nearest_charger_km']:.1f} km</b><br>Severity: <b>{row['desert_severity_index']:.1f}/100</b>"
         ).add_to(m_desert)
         
-    st_folium(m_desert, width=650, height=450)
+    st_folium(m_desert, use_container_width=True, height=450)
 
 with col_table:
     st.subheader("🏆 Top Critical Charging Desert Hotspots")
@@ -144,4 +250,3 @@ render_key_insights(
     ],
     badge_text="⚡ DESERT SEVERITY AUDIT"
 )
-
