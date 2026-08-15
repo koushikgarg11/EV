@@ -325,6 +325,7 @@ with col_g1:
             color="ev_registrations",
             color_continuous_scale="Viridis",
             labels={"ev_registrations": "Total Registrations", "state": "State"},
+            title="Top States by EV Registrations",
             template="plotly_dark",
             height=380
         )
@@ -343,6 +344,7 @@ with col_g2:
             hole=0.4,
             color_discrete_sequence=px.colors.sequential.Tealgrn,
             template="plotly_dark",
+            title="Charging Station Distribution by Operator",
             height=380
         )
         fig_app_op = fix_plotly_dark(fig_app_op)
