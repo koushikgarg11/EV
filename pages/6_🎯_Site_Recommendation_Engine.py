@@ -194,6 +194,7 @@ for _, site_row in top_5.iterrows():
 fig_radar.update_layout(
     polar=dict(radialaxis=dict(visible=True, range=[0, 50])),
     template="plotly_dark",
+    title="Multi-Criteria Site Comparison",
     height=450
 )
 fig_radar = fix_plotly_dark(fig_radar)
@@ -234,6 +235,7 @@ with col_exp1:
             color_discrete_sequence=px.colors.qualitative.Pastel,
             text="Contribution %",
             template="plotly_dark",
+            title="Criteria Vs. Contribution%",
             height=280
         )
         fig_contrib = fix_plotly_dark(fig_contrib)
