@@ -176,6 +176,7 @@ with col1:
         text="Total Rows",
         labels={"Total Rows Raw": "Record Count"},
         template="plotly_dark",
+        title="Record Volume Comparison",
         height=380
     )
     fig_vol = fix_plotly_dark(fig_vol)
@@ -192,6 +193,7 @@ with col2:
         color_continuous_scale="Greens",
         text="Completeness Score (%)",
         template="plotly_dark",
+        title=" Completeness Score (%)",
         height=380
     )
     fig_comp = fix_plotly_dark(fig_comp)
