@@ -202,6 +202,7 @@ fig_sim = px.bar(
     text="priority_investment_score",
     labels={"priority_investment_score": "Simulated Priority Score", "name": "Location Name"},
     template="plotly_dark",
+    title="Priority Site Rankings under Active Strategy Profile",
     height=420
 )
 fig_sim = fix_plotly_dark(fig_sim)
@@ -228,6 +229,7 @@ fig_para = px.parallel_coordinates(
         "priority_investment_score": "Priority Score"
     },
     template="plotly_dark",
+    title="Multi-Criteria Trade-off Analysis",
     height=450
 )
 fig_para = fix_plotly_dark(fig_para)
