@@ -175,6 +175,7 @@ with col1:
         color_continuous_scale="Viridis",
         labels={"ev_registrations": "Total EV Registrations", "state": "State"},
         template="plotly_dark",
+        title="State-wise EV Adoption Velocity",
         height=400
     )
     fig_vahan = fix_plotly_dark(fig_vahan)
@@ -190,6 +191,7 @@ with col2:
         color_discrete_sequence=px.colors.sequential.Tealgrn,
         hole=0.4,
         template="plotly_dark",
+        title="Charging Infrastructure Market Share",
         height=400
     )
     fig_chargers = fix_plotly_dark(fig_chargers)
@@ -209,6 +211,7 @@ with col3:
         color="ev_registrations",
         color_continuous_scale="Blues",
         template="plotly_dark",
+        title="Category & Regional Hierarchy",
         height=450
     )
     fig_sunburst = fix_plotly_dark(fig_sunburst)
@@ -229,6 +232,7 @@ with col4:
         text="evs_per_charger",
         labels={"evs_per_charger": "EVs per Charger", "state": "State"},
         template="plotly_dark",
+        title="State EV-to-Charger Deficit Ratio",
         height=450
     )
     fig_ratio = fix_plotly_dark(fig_ratio)
