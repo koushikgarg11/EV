@@ -610,13 +610,6 @@ Testing     Automated analytical tests
 Docs        BRD + PRD + Architecture + Data Catalogue
 ```
 
----
 
-## 🔗 Project
-
-**GitHub:**
-https://github.com/koushikgarg11/EV
-
----
 
 ### Built with Python • Streamlit • GIS • Data Analytics • Decision Intelligence
