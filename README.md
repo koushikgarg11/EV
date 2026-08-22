@@ -182,3 +182,4 @@ The project follows an end-to-end analytical pipeline:
                     │ Recommendations      │
                     │ Scenario Simulation  │
                     └──────────────────────┘
+```
