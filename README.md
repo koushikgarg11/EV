@@ -183,3 +183,42 @@ The project follows an end-to-end analytical pipeline:
                     │ Scenario Simulation  │
                     └──────────────────────┘
 ```
+
+---
+
+## 🗺️ Spatial Analytics
+
+Spatial analysis is a core component of the platform.
+
+The system uses spatial relationships to evaluate:
+
+- Distance between demand and charging infrastructure
+- Charging coverage within defined catchments
+- Infrastructure density
+- Highway corridor gaps
+- Proximity to electrical substations
+- Commercial demand clusters
+- Potential charging deserts
+
+### Spatial Indexing
+
+The project uses **SciPy KDTree** to support nearest-neighbour and radius-based spatial searches across geospatial datasets.
+
+This enables efficient spatial querying when analysing relationships between demand locations and existing or potential charging infrastructure.
+
+---
+
+## 🌵 Charging Desert Detection
+
+A **charging desert** is treated as an area where charging infrastructure does not adequately serve the surrounding demand.
+
+The analysis considers relationships between:
+
+```text
+        EV Demand
+            +
+   Commercial Activity
+            +
+ Existing Charging Coverage
+            ↓
+      Charging Gap
